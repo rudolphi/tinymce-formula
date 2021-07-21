@@ -6,7 +6,7 @@ const del = require('del')
 
 const options = {
   build: {
-    tasks : ['clean', 'copy:langs', 'copy:mathjax', 'minify:formula', 'minify:plugin', 'minify:styles']
+    tasks : ['clean', 'copy:langs', 'copy:mathjax', 'copy:mathjax_other', 'minify:formula', 'minify:plugin', 'minify:styles']
   }
 }
 
@@ -31,6 +31,7 @@ const paths = {
         'extensions/MathZoom.js',
         'extensions/MathMenu.js',
         'jax/element/mml/jax.js',
+        'extensions/a11y/*.js',
         'extensions/toMathML.js',
         'extensions/TeX/*.js',
         'jax/input/MathML/jax.js',
@@ -63,6 +64,10 @@ const paths = {
         'jax/output/SVG/fonts/TeX/SansSerif/Regular/*.js',
         'jax/output/SVG/fonts/TeX/SansSerif/Bold/*.js',
         'jax/output/SVG/fonts/TeX/Size4/Regular/Main.js'
+      ],
+      other_files: [
+        'extensions/a11y/invalid_keypress.mp3',
+        'extensions/a11y/invalid_keypress.ogg',
       ]
     }
   },
@@ -117,10 +122,25 @@ gulp.task('copy:mathjax', function() {
   copyAndMinifyTree(paths.src.mathjax.files, paths.src.mathjax.dir, paths.dest.mathjax)
 })
 
+gulp.task('copy:mathjax_other', function() {
+  copyTree(paths.src.mathjax.other_files, paths.src.mathjax.dir, paths.dest.mathjax)
+})
+
+let copy = function(src, dest) {
+  return gulp.src(src)
+    .pipe(gulp.dest(dest))
+}
+
 let copyAndMinify = function(src, dest) {
   return gulp.src(src)
     .pipe(plugins.uglify())
     .pipe(gulp.dest(dest))
+}
+
+let copyTree = function(files, srcFolder, destFolder) {
+  for(let filePath of files) {
+    copy(path.resolve(srcFolder, filePath), path.resolve(destFolder, path.dirname(filePath)))
+  }
 }
 
 let copyAndMinifyTree = function(files, srcFolder, destFolder) {
