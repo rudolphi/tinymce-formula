@@ -2556,7 +2556,7 @@ body {
     overflow-x: hidden;
 }
 .fm-editor .fm-editor-content {
-    min-height: 200px;
+    min-height: 160px;
     width: 97%;
     border: none;
     resize: none;
@@ -2570,7 +2570,7 @@ body {
 /* Result */
 .fm-editor .fm-editor-result-area {
     padding: 20px;
-    min-height: 200px;
+    min-height: 150px;
     border: 1px solid #ccc;
 }
 .fm-editor .fm-editor-result-area .fm-editor-result-area-label {
