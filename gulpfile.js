@@ -6,7 +6,7 @@ const del = require('del')
 
 const options = {
   build: {
-    tasks : ['clean', 'copy:langs', 'copy:mathjax', 'copy:mathjax_other', 'minify:formula', 'minify:plugin', 'minify:styles']
+    tasks : ['clean', 'copy:langs', 'copy:mathjax', 'copy:mathjax_other', 'copy:custom_config', 'minify:formula', 'minify:plugin', 'minify:styles']
   }
 }
 
@@ -15,11 +15,12 @@ const paths = {
     styles: ['src/css/*.css'],
     formula: ['src/parameters/*.js', 'src/components/*.js', 'src/lib/*.js'],
     langs: ['src/translations/*.js'],
+    custom_config: ['src/config/*.js'],
     mathjax: {
       dir: 'node_modules/mathjax/unpacked',
       files: [
         'MathJax.js',
-        'config/TeX-AMS-MML_SVG.js',
+        //'config/TeX-AMS-MML_SVG.js',
         'jax/input/MathML/config.js',
         'jax/input/TeX/config.js',
         'jax/output/SVG/config.js',
@@ -40,7 +41,6 @@ const paths = {
         'jax/output/SVG/fonts/TeX/*.js',
         'jax/output/SVG/autoload/*.js',
         'extensions/MathML/mml3.js',
-        'extensions/AssistiveMML.js',
         'jax/input/MathML/entities/*.js',
         'jax/element/mml/optable/*.js',
         'extensions/MatchWebFonts.js',
@@ -75,6 +75,7 @@ const paths = {
     styles: 'css',
     formula: 'js',
     langs: 'js/translations',
+    custom_config: 'js/mathjax/config',
     mathjax: 'js/mathjax'
   }
 }
@@ -91,6 +92,10 @@ gulp.task('clean', function(){
 
 gulp.task('copy:langs', function() {
   return copyAndMinify(paths.src.langs, paths.dest.langs)
+})
+
+gulp.task('copy:custom_config', function() {
+  return copyAndMinify(paths.src.custom_config, paths.dest.custom_config)
 })
 
 gulp.task('minify:formula', function() {
