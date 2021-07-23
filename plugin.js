@@ -3,7 +3,7 @@
     init: function(editor, url) {
       var options = editor.getParam('formula') || {};
       var fOptions = {}
-      fOptions.path = options.path || url;
+      fOptions.path = url;
       fOptions.mlang = options.mlang || 'latex';
 
       var icon_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 121.83 122.88">' +
