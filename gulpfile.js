@@ -80,23 +80,18 @@ const paths = {
   }
 }
 
-gulp.task( 'build', function() {
-  options.build.tasks.forEach(task => {
-    gulp.start(task);
-  })
-})
-
-gulp.task('clean', function(){
-  del.sync([paths.dest.styles, paths.dest.formula])
+gulp.task('clean', function(done){
+  del.sync([paths.dest.styles, paths.dest.formula]);
+  done();
 });
 
 gulp.task('copy:langs', function() {
   return copyAndMinify(paths.src.langs, paths.dest.langs)
-})
+});
 
 gulp.task('copy:custom_config', function() {
   return copyAndMinify(paths.src.custom_config, paths.dest.custom_config)
-})
+});
 
 gulp.task('minify:formula', function() {
   return gulp.src(paths.src.formula)
@@ -105,14 +100,14 @@ gulp.task('minify:formula', function() {
     .pipe(plugins.rename('formula.min.js'))
     .pipe(plugins.uglify())
     .pipe(gulp.dest(paths.dest.formula))
-})
+});
 
 gulp.task('minify:plugin', function() {
   return gulp.src('plugin.js')
     .pipe(plugins.rename('plugin.min.js'))
     .pipe(plugins.uglify())
     .pipe(gulp.dest('./'))
-})
+});
 
 gulp.task('minify:styles', function() {
   return gulp.src(paths.src.styles)
@@ -121,15 +116,17 @@ gulp.task('minify:styles', function() {
     .pipe(plugins.rename('formula.min.css'))
     .pipe(plugins.cleanCss())
     .pipe(gulp.dest(paths.dest.styles))
-})
+});
 
-gulp.task('copy:mathjax', function() {
-  copyAndMinifyTree(paths.src.mathjax.files, paths.src.mathjax.dir, paths.dest.mathjax)
-})
+gulp.task('copy:mathjax', function(done) {
+  copyAndMinifyTree(paths.src.mathjax.files, paths.src.mathjax.dir, paths.dest.mathjax);
+  done();
+});
 
-gulp.task('copy:mathjax_other', function() {
-  copyTree(paths.src.mathjax.other_files, paths.src.mathjax.dir, paths.dest.mathjax)
-})
+gulp.task('copy:mathjax_other', function(done) {
+  copyTree(paths.src.mathjax.other_files, paths.src.mathjax.dir, paths.dest.mathjax);
+  done();
+});
 
 let copy = function(src, dest) {
   return gulp.src(src)
@@ -154,3 +151,6 @@ let copyAndMinifyTree = function(files, srcFolder, destFolder) {
   }
 }
 
+gulp.task( 'build', gulp.series(
+  options.build.tasks
+));

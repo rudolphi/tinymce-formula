@@ -69,7 +69,11 @@
         if(window.frames['tinymceFormula'] && window.frames['tinymceFormula'].getData) {
           window.frames['tinymceFormula'].getData(function(src, mlang, equation) {
             if(src) {
-              editor.insertContent('<img class="fm-editor-equation" src="' + src + '" data-mlang="' + mlang + '" data-equation="' + encodeURIComponent(equation) + '"/>');
+				if (mlang != "mml") {
+					editor.insertContent('<img class="fm-editor-equation" src="' + src + '" data-mlang="' + mlang + '" data-equation="' + encodeURIComponent(equation) + '"/>');
+				} else {
+					editor.insertContent('<math>' + equation + '</math>');
+				}
               e.close();
             } else {
               e.close();
@@ -81,19 +85,35 @@
   }
 
   function isFormulaElement(element) {
-    return (element && element.className.indexOf('fm-editor-equation')>-1 && element.nodeName.toLowerCase() === 'img')
+    return (element && (getMathElement(element) || (element.className.indexOf('fm-editor-equation')>-1 && element.nodeName.toLowerCase() === 'img')));
+  }
+  
+  function getMathElement(element) {
+	  if (element) {
+		if (element.nodeName.toLowerCase() === 'math') {
+			return element;
+		}
+		return getMathElement(element.parentNode);
+	  }
   }
 
   function buildIFrame(editor, fOptions){
     var url = fOptions.path;
-    var currentNode = editor.selection.getNode();
+    var currentNode = editor.selection.getNode(),mathElement = getMathElement(currentNode);
+	if (mathElement) {
+		currentNode = mathElement;
+		editor.selection.select(currentNode); // must replace all
+	}
     var lang = editor.getParam('language') || 'en';
     var mlangParam = '&mlang=' + fOptions.mlang;
     var equationParam = '';
     if (currentNode.nodeName.toLowerCase() == 'img' && currentNode.className.indexOf('fm-editor-equation')>-1) {
       if (currentNode.getAttribute('data-mlang')) mlangParam = "&mlang=" + currentNode.getAttribute('data-mlang');
       if (currentNode.getAttribute('data-equation')) equationParam = '&equation=' + currentNode.getAttribute('data-equation');
-    }
+    } else if (currentNode.nodeName.toLowerCase() == 'math') {
+		mlangParam = "&mlang=mml";
+		equationParam = "&equation=" + encodeURIComponent(currentNode.innerHTML);
+	}
     var html = '<iframe name="tinymceFormula" id="tinymceFormula" src="'+ url + '/index.html'+ '?lang='+ lang + mlangParam + equationParam + '" scrolling="no" frameborder="0" style="width:100%; height:515px"></iframe>';
     return html;
   }

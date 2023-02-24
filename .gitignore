@@ -2,3 +2,7 @@
 node_modules
 *.min.css
 *.min.js
+/nbproject/private/
+/bower_components/
+/nbproject/
+/package-lock.json
